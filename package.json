@@ -1,0 +1,24 @@
+{
+  "name": "tripletriad",
+  "version": "0.0.1",
+  "description": "Web game inspired by Final Fantasy XIV minigame \"Triple Triad\"",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Linkmetal/TripleTriad.git"
+  },
+  "keywords": [
+    "TripleTriad",
+    "CardGame",
+    "Web"
+  ],
+  "author": "Carlos Javier Díaz Falcon (Linkmetal)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Linkmetal/TripleTriad/issues"
+  },
+  "homepage": "https://github.com/Linkmetal/TripleTriad#readme"
+}

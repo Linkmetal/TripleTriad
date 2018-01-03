@@ -1,0 +1,32 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#mainContainer {
+  width: 100%;
+  height: 100%;
+}
+
+#board {
+  position: relative;
+  width: 70%;
+  height: 90%;
+  top: 5%;
+  left: 15%;
+  background-image: url("/img/board2.jpg");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+#canvas {
+  border-radius: 6px;
+  position: relative;
+  left: 370px;
+  top: 50px;
+}
