@@ -1,11 +1,19 @@
 var width = window.innerWidth;
 var height = window.innerHeight;
-var game = new Phaser.Game(width, height, Phaser.CANVAS, 'game', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(width, height, Phaser.CANVAS, 'game', {
+    preload: preload,
+    create: create,
+    update: update
+});
 var data_;
 var cardlist;
-var style = { font: "18px Calibri", fill: "#ffffff" , align: "center"};
+var style = {
+    font: "18px Calibri",
+    fill: "#ffffff",
+    align: "center"
+};
 class Hand {
-    constructor(){
+    constructor() {
         this.cards = [];
         this.size = 0;
         this.container = new Phaser.Group(game);
@@ -15,7 +23,7 @@ class Hand {
 }
 
 class Card {
-    constructor(obj, color){
+    constructor(obj, color) {
         this.id = obj.id;
         this.name = obj.name;
         this.top = obj.top;
@@ -25,12 +33,16 @@ class Card {
         this.element = obj.element;
         this.level = obj.level;
         this.color = color;
+        this.originalPos;
     }
-    render(){
+    stopDrag() {
+        this.sprite.position = this.originalPos;
+    }
+    render(hand) {
         this.sprite = game.add.sprite(0, 0, "cards1b", this.id - 1);
         this.sprite.inputEnabled = true;
         this.sprite.input.enableDrag(true);
-        var dialog = game.add.sprite(0,0, "dialogWindow");
+        var dialog = game.add.sprite(0, 0, "dialogWindow");
         dialog.scale.setTo(0.30);
         var text = game.add.text(20, 20, this.name.toUpperCase(), style);
         text.position.x = dialog.width / 2;
@@ -39,13 +51,24 @@ class Card {
         this.sprite.addChild(text);
         dialog.alignIn(this.sprite, Phaser.BOTTOM_CENTER);
         text.alignIn(dialog, Phaser.CENTER);
+        hand.add(this.sprite);
+        hand.align(1, 5, 192, 145);
+        this.originalPos = this.sprite.position.clone();
+        this.sprite.events.onDragStop.add(function (e, originalPos) {
+            hand.remove(e);
+            hand.add(e);
+            hand.align(1, 5, 192, 145);
+            // e.position.copyFrom(originalPos);
+            // e.input.draggable = false;
+        });
     }
+
 }
 
-class CardList{
-    constructor(){
+class CardList {
+    constructor() {
         this.cards = [];
-        for(let i = 0; i < data_.length; i++){
+        for (let i = 0; i < data_.length; i++) {
             this.cards.push(data_[i]);
         }
     }
@@ -56,7 +79,7 @@ function readTextFile(file, callback) {
     var rawFile = new XMLHttpRequest();
     rawFile.overrideMimeType("application/json");
     rawFile.open("GET", file, true);
-    rawFile.onreadystatechange = function() {
+    rawFile.onreadystatechange = function () {
         if (rawFile.readyState === 4 && rawFile.status == "200") {
             callback(rawFile.responseText);
         }
@@ -65,7 +88,7 @@ function readTextFile(file, callback) {
 }
 
 function preload() {
-    readTextFile("data/cards.json", function(text){
+    readTextFile("data/cards.json", function (text) {
         data_ = JSON.parse(text);
     });
     game.load.image("board", "/img/board6.png");
@@ -86,33 +109,28 @@ function create() {
     var board = game.add.sprite(width * 0.32, height * 0.08, "board");
     var hand1 = game.add.sprite(width * 0.00, 0, "handContainer");
     var hand2 = game.add.sprite(width * 0.85, 0, "handContainer");
-    hand1.scale.setTo(0.8,0.9);
-    hand2.scale.setTo(0.8,0.9);
-    board.scale.setTo(1.2,1.05);
+    hand1.scale.setTo(0.8, 0.9);
+    hand2.scale.setTo(0.8, 0.9);
+    board.scale.setTo(1.2, 1.05);
     //Layer 1
     var playerHand = new Phaser.Group(game);
     playerHand.top += height * 0.06;
     playerHand.left += width * 0.024;
     var comHand = new Phaser.Group(game);
-    
+
     //Layer 2
     var card1 = new Card(cardlist.cards[29], "blue");
     var card2 = new Card(cardlist.cards[45], "blue");
     var card3 = new Card(cardlist.cards[32], "blue");
     var card4 = new Card(cardlist.cards[12], "blue");
     var card5 = new Card(cardlist.cards[11], "blue");
-    
-    card1.render();
-    card2.render();
-    card3.render();
-    card4.render();
-    card5.render();
-    playerHand.add(card1.sprite);
-    playerHand.add(card2.sprite);
-    playerHand.add(card3.sprite);
-    playerHand.add(card4.sprite);
-    playerHand.add(card5.sprite);
-    playerHand.align(1,5,192,145);
+
+    card1.render(playerHand);
+    card2.render(playerHand);
+    card3.render(playerHand);
+    card4.render(playerHand);
+    card5.render(playerHand);
+    // playerHand.align(1, 5, 192, 145);
 
 
     /*var card1 = game.add.sprite(width * 0.024, height * 0.06, "cards1b", 0);
@@ -126,8 +144,8 @@ function create() {
     var card8 = game.add.sprite(width * 0.874, height * 0.37, "cards1r", 2);
     var card9 = game.add.sprite(width * 0.874, height * 0.52, "cards1r", 3);
     var card10 = game.add.sprite(width * 0.874, height * 0.67, "cards1r", 4);*/
-    
-    
+
+
     /*card1.inputEnabled = true;
     card1.input.enableDrag(true);
     card1.input.enableSnap(32, 32, false, false);
@@ -149,13 +167,13 @@ function create() {
     card9.input.enableDrag(true);
     card10.inputEnabled = true;
     card10.input.enableDrag(true);*/
-    
+
     //var comCards = [card6,card7, card8, card9, card10];
-    
+
     //var playerHand = new Phaser.DisplayObjectContainer();
     //playerHand.width = 237;
     //playerHand.height = 919;
-    
+
     /*playerHand.addChild(new Phaser.Sprite(0, 0, "cards1r", 0));
     playerHand.addChild(new Phaser.Sprite(0, 0, "cards1r", 1));
     playerHand.addChild(new Phaser.Sprite(0, 0, "cards1r", 2));
@@ -169,5 +187,5 @@ function create() {
 }
 
 function update() {
-    
+
 }
