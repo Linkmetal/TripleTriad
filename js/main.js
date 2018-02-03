@@ -12,12 +12,41 @@ var style = {
     fill: "#ffffff",
     align: "center"
 };
+
+var card1;
+var card2;
+var card3;
+var card4;
+var card5;
+
+let boardo;
+
+class Board {
+    constructor(){
+        this.slots = []; 
+    }
+    render(){
+        this.container = new Phaser.Group(game);
+        this.container.top += height * 0.1321;
+        this.container.left += width * 0.351;
+        for(let i = 0; i < 9; i++){
+            //this.slots.push(game.add.sprite(0, 0, "cards1b", 24));
+            this.slots.push(new Card(cardlist.cards[112], "blue"));
+        }
+        for(let i = 0; i < 9; i++){
+            this.slots[i].renderEmpty(this.container);
+            //this.container.add(this.solts[i]);
+        }
+        this.container.align(3, 3, 192, 247);
+        console.log(this.slots);
+    }
+}
+
 class Hand {
     constructor() {
         this.cards = [];
         this.size = 0;
         this.container = new Phaser.Group(game);
-
     }
 
 }
@@ -35,13 +64,26 @@ class Card {
         this.color = color;
         this.originalPos;
     }
+    
     stopDrag() {
         this.sprite.position = this.originalPos;
     }
-    render(hand) {
+    renderEmpty(hand){
+        this.sprite = game.add.sprite(0, 0);
+        this.sprite.inputEnabled = true;
+        this.sprite.input.enableDrag(true);
+        this.sprite.width = 192;
+        this.sprite.height = 247;
+        //Add to the hand group
+        hand.add(this.sprite);
+        hand.align(1, 5, 192, 145);
+    }
+    render(hand, slots) {
+        //Create the sprite and drag property
         this.sprite = game.add.sprite(0, 0, "cards1b", this.id - 1);
         this.sprite.inputEnabled = true;
         this.sprite.input.enableDrag(true);
+        //Add name to the card
         var dialog = game.add.sprite(0, 0, "dialogWindow");
         dialog.scale.setTo(0.30);
         var text = game.add.text(20, 20, this.name.toUpperCase(), style);
@@ -51,18 +93,29 @@ class Card {
         this.sprite.addChild(text);
         dialog.alignIn(this.sprite, Phaser.BOTTOM_CENTER);
         text.alignIn(dialog, Phaser.CENTER);
+        //Add to the hand group
         hand.add(this.sprite);
         hand.align(1, 5, 192, 145);
-        this.originalPos = this.sprite.position.clone();
-        this.sprite.events.onDragStop.add(function (e, originalPos) {
-            hand.remove(e);
-            hand.add(e);
-            hand.align(1, 5, 192, 145);
-            // e.position.copyFrom(originalPos);
-            // e.input.draggable = false;
+        //Drag event
+        let obj = this;
+        this.sprite.events.onDragStop.add(function(sprite, ojb){
+            console.log(boardo.slots);
+            for(let i = 0; i <  boardo.slots.length; i++){
+                if(checkOverlap(sprite,boardo.slots[i].sprite)){
+                    if(boardo.slots[i].name == "none"){
+                        boardo.container.remove(boardo.slots[i].sprite);
+                        boardo.container.addAt(sprite, i);
+                        boardo.container.align(3, 3, 192, 247);
+                        boardo.slots.splice(i, 1);
+                        boardo.slots.splice(i, 0, obj);
+                        sprite.inputEnabled = false;
+                        sprite.input.enableDrag(false);
+                    }
+                }   
+            }   
         });
     }
-
+   
 }
 
 class CardList {
@@ -104,11 +157,16 @@ function preload() {
 function create() {
     cardlist = new CardList();
     game.physics.startSystem(Phaser.Physics.ARCADE);
+
     //Layer 0
     var background = game.add.sprite(0, 0, "background");
     var board = game.add.sprite(width * 0.32, height * 0.08, "board");
     var hand1 = game.add.sprite(width * 0.00, 0, "handContainer");
     var hand2 = game.add.sprite(width * 0.85, 0, "handContainer");
+    
+    boardo = new Board();
+    boardo.render();
+    
     hand1.scale.setTo(0.8, 0.9);
     hand2.scale.setTo(0.8, 0.9);
     board.scale.setTo(1.2, 1.05);
@@ -119,73 +177,31 @@ function create() {
     var comHand = new Phaser.Group(game);
 
     //Layer 2
-    var card1 = new Card(cardlist.cards[29], "blue");
-    var card2 = new Card(cardlist.cards[45], "blue");
-    var card3 = new Card(cardlist.cards[32], "blue");
-    var card4 = new Card(cardlist.cards[12], "blue");
-    var card5 = new Card(cardlist.cards[11], "blue");
+    card1 = new Card(cardlist.cards[29], "blue");
+    card2 = new Card(cardlist.cards[45], "blue");
+    card3 = new Card(cardlist.cards[32], "blue");
+    card4 = new Card(cardlist.cards[12], "blue");
+    card5 = new Card(cardlist.cards[11], "blue");
 
-    card1.render(playerHand);
-    card2.render(playerHand);
-    card3.render(playerHand);
-    card4.render(playerHand);
-    card5.render(playerHand);
-    // playerHand.align(1, 5, 192, 145);
-
-
-    /*var card1 = game.add.sprite(width * 0.024, height * 0.06, "cards1b", 0);
-    var card2 = game.add.sprite(width * 0.024, height * 0.2125, "cards1b", 1);
-    var card3 = game.add.sprite(width * 0.024, height * 0.365, "cards1b", 2);
-    var card4 = game.add.sprite(width * 0.024, height * 0.5175, "cards1b", 3);
-    var card5 = game.add.sprite(width * 0.024, height * 0.67, "cards1b", 4);
+    card1.render(playerHand, boardo.slots);
+    card2.render(playerHand, boardo.slots);
+    card3.render(playerHand, boardo.slots);
+    card4.render(playerHand, boardo.slots);
+    card5.render(playerHand, boardo.slots);    
     
-    var card6 = game.add.sprite(width * 0.874, height * 0.06, "cards1r", 0);
-    var card7 = game.add.sprite(width * 0.874, height * 0.21, "cards1r", 1);
-    var card8 = game.add.sprite(width * 0.874, height * 0.37, "cards1r", 2);
-    var card9 = game.add.sprite(width * 0.874, height * 0.52, "cards1r", 3);
-    var card10 = game.add.sprite(width * 0.874, height * 0.67, "cards1r", 4);*/
-
-
-    /*card1.inputEnabled = true;
-    card1.input.enableDrag(true);
-    card1.input.enableSnap(32, 32, false, false);
-    card2.inputEnabled = true;
-    card2.input.enableDrag(true);
-    card3.inputEnabled = true;
-    card3.input.enableDrag(true);
-    card4.inputEnabled = true;
-    card4.input.enableDrag(true);
-    card5.inputEnabled = true;
-    card5.input.enableDrag(true);
-    card6.inputEnabled = true;
-    card6.input.enableDrag(true);
-    card7.inputEnabled = true;
-    card7.input.enableDrag(true);
-    card8.inputEnabled = true;
-    card8.input.enableDrag(true);
-    card9.inputEnabled = true;
-    card9.input.enableDrag(true);
-    card10.inputEnabled = true;
-    card10.input.enableDrag(true);*/
-
-    //var comCards = [card6,card7, card8, card9, card10];
-
-    //var playerHand = new Phaser.DisplayObjectContainer();
-    //playerHand.width = 237;
-    //playerHand.height = 919;
-
-    /*playerHand.addChild(new Phaser.Sprite(0, 0, "cards1r", 0));
-    playerHand.addChild(new Phaser.Sprite(0, 0, "cards1r", 1));
-    playerHand.addChild(new Phaser.Sprite(0, 0, "cards1r", 2));
-    playerHand.addChild(new Phaser.Sprite(0, 0, "cards1r", 3));
-    playerHand.addChild(new Phaser.Sprite(0, 0, "cards1r", 4));*/
-    /*playerHand.add(card6);
-    playerHand.add(card7);
-    playerHand.add(card8);
-    playerHand.add(card9);
-    playerHand.add(card10);*/
+   
 }
 
 function update() {
+    
+}
 
+function checkOverlap(spriteA, spriteB){
+    var boundsA = spriteA.getBounds();
+    boundsA.height = boundsA.height / 3;
+    boundsA.width = boundsA.width / 3;
+    var boundsB = spriteB.getBounds();
+    boundsB.height = boundsB.height / 3;
+    boundsB.width = boundsB.width / 3;
+    return Phaser.Rectangle.intersects(boundsA, boundsB);
 }
