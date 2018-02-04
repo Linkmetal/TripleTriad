@@ -42,6 +42,9 @@ var turn = -1;
 var cardsPlayed = 0;
 let boardo;
 
+var music;
+var music2;
+
 class Board {
     constructor() {
         this.slots = [];
@@ -170,6 +173,10 @@ function readTextFile(file, callback) {
     rawFile.send(null);
 }
 
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////FUNCIONES PHASER////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
 function preload() {
     readTextFile("data/cards.json", function (text) {
         data_ = JSON.parse(text);
@@ -184,10 +191,14 @@ function preload() {
     game.load.image("handContainer", "/img/handContainer.png");
     game.load.image("bscore", "/img/blue_card.png");
     game.load.image("rscore", "/img/red_card.png");
+    game.load.audio('music', 'music/theme.mp3');
+    game.load.audio('victory', 'music/victory.mp3');
 }
 
 function create() {
-    
+    music = game.add.audio('music');
+    music2 = game.add.audio('victory');
+    music.play();
     
     
     cardlist = new CardList();
@@ -284,15 +295,20 @@ function update() {
     else{
         if(score[0] == 5 ){
             notification("warning", "EMPATE");
-            game.state.restart();
+            game.paused = true;
+            // game.state.restart();
         }
         if(score[0] < 5){
             notification("error", "PERDISTE");
-            game.state.restart();
+            game.paused = true;
+            // game.state.restart();
         }
         if(score[0] > 5){
+            music.pause();
+            music2.play();
             notification("success", "GANASTE");
-            game.state.restart();
+            game.paused = true;
+            // game.state.restart();
         }
     }
 }
@@ -470,7 +486,7 @@ function flipCard(card, mov){
                 "width": "50vw",
                 "height": "6vh",
                 "text-align": "center",
-             });;
+             });
         }
         refreshScore();
     }
@@ -481,7 +497,7 @@ function flipCard(card, mov){
         score[0]--;
         score[1]++;
         if(mov != ""){
-           notification("info", mov + ": " + card.name + " girada").css({
+           notification("info", mov + ": " + card.name + "' girada").css({
                "font-size": "150%",
                "width": "50vw",
                "height": "6vh",
