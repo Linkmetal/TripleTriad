@@ -248,8 +248,9 @@ function update() {
             turn = 0;
         }
         if (turn == 0) {
-            eDrag();
-        } else {
+            // eDrag();
+        } 
+        else {
             dDrag();
             turn = 0;
             setTimeout(comMove, 2000);
@@ -262,14 +263,14 @@ function update() {
 
 function dDrag() {
     for(let i = 0 ; i < playerCards.length; i++){
-        playerCards[i].inputEnabled = false;
+        playerCards[i].sprite.inputEnabled = false;
         playerCards[i].sprite.input.enableDrag(false);
     }
 }
 
 function eDrag() {
     for(let i = 0 ; i < playerCards.length; i++){
-        playerCards[i].inputEnabled = true;
+        playerCards[i].sprite.inputEnabled = true;
         playerCards[i].sprite.input.enableDrag(true);
     }
 }
@@ -311,120 +312,45 @@ function comMove(){
     turn = 0;
     cardsPlayed++;
     checkMove();
+    eDrag();
 }
 
+
 function checkMove(){
-    let movedIndex = boardo.slots.indexOf(lastMoved);
     let slots = boardo.slots;
-    switch(movedIndex){
-        case 0:
-            if(lastMoved.right > slots[1].left && slots[1].left != 0){
-                flipCard(slots[1]);
-            }
-            if(lastMoved.down > slots[3].top && slots[3].top != 0){
-                flipCard(slots[3]);
-            }
-        break;
-        
-        case 1:
-            if(lastMoved.left > slots[0].right && slots[0].right != 0){
-                flipCard(slots[0]);
-            }
-            if(lastMoved.right > slots[2].left && slots[2].left != 0){
-                flipCard(slots[2]);
-            }
-            if(lastMoved.down > slots[4].top && slots[4].top != 0){
-                flipCard(slots[4]);
-            }
-        break;
+    let index = slots.indexOf(lastMoved);
+    let type = index % 3;
 
-        case 2:
-            if(lastMoved.left > slots[1].right && slots[1].right != 0){
-                flipCard(slots[1]);
-            }
-            if(lastMoved.down > slots[5].top && slots[5].top != 0){
-                flipCard(slots[5]);
-            }
-        break;
-
-        case 3:
-            if(lastMoved.top > slots[0].down && slots[0].down != 0){
-                flipCard(slots[0]);
-            }
-            if(lastMoved.right > slots[4].left && slots[4].left != 0){
-                flipCard(slots[4]);
-            }
-            if(lastMoved.down > slots[6].top && slots[6].top != 0){
-                flipCard(slots[6]);
-            }
-        break;
-
-        case 4:
-            if(lastMoved.top > slots[1].down && slots[1].down != 0){
-                flipCard(slots[1]);
-            }
-            if(lastMoved.left > slots[3].right && slots[3].right != 0){
-                flipCard(slots[3]);
-            }
-            if(lastMoved.right > slots[5].left && slots[5].left != 0){
-                flipCard(slots[5]);
-            }
-            if(lastMoved.down > slots[7].top && slots[7].top != 0){
-                flipCard(slots[7]);
-            }
-        break;
-
-        case 5:
-            if(lastMoved.top > slots[2].down && slots[2].down != 0){
-                flipCard(slots[2]);
-            }
-            if(lastMoved.left > slots[4].right && slots[4].right != 0){
-                flipCard(slots[4]);
-            }
-            if(lastMoved.down > slots[8].top && slots[8].top != 0){
-                flipCard(slots[8]);
-            }
-        break;
-
-        case 6:
-            if(lastMoved.top > slots[3].down && slots[3].down != 0){
-                flipCard(slots[3]);
-            }
-            if(lastMoved.right > slots[7].left && slots[7].left != 0){
-                flipCard(slots[7]);
-            }
-        break;
-
-        case 7:
-            if(lastMoved.top > slots[4].down && slots[4].down != 0){
-                flipCard(slots[4]);
-            }
-            if(lastMoved.left > slots[6].right && slots[6].right != 0){
-                flipCard(slots[6]);
-            }
-            if(lastMoved.right > slots[8].left && slots[8].left != 0){
-                flipCard(slots[8]);
-            }
-        break;
-
-        case 8:
-            if(lastMoved.top > slots[5].down && slots[5].down != 0){
-                flipCard(slots[5]);
-            }
-            if(lastMoved.left > slots[7].right && slots[7].right != 0){
-                flipCard(slots[7]);
-            }
-        break;
+    //Highest Number Check
+    if(type != 2){
+        if(lastMoved.right > slots[index + 1].left){
+            flipCard(slots[index + 1]);
+        }
     }
+    if(type != 0){
+        if(lastMoved.left > slots[index - 1].right){
+            flipCard(slots[index - 1]);
+        }
+    }
+    if(index - 3 >= type){
+        if(lastMoved.top > slots[index - 3].down){
+            flipCard(slots[index - 3]);
+        }
+    }
+    if(index + 3 <= type + 6){
+        if(lastMoved.down > slots[index + 3].top){
+            flipCard(slots[index + 3]);
+        }
+    }
+}
 
-    function flipCard(card){
-        if(turn == 1 && card.color == 'r'){
-            card.sprite.loadTexture("cards1b", card.id - 1);
-            card.color = 'b';
-        }
-        if(turn == 0 && card.color == 'b'){
-            card.sprite.loadTexture("cards1r", card.id - 1);
-            card.color = 'r';
-        }
+function flipCard(card){
+    if(turn == 1 && card.color == 'r'){
+        card.sprite.loadTexture("cards1b", card.id - 1);
+        card.color = 'b';
+    }
+    if(turn == 0 && card.color == 'b'){
+        card.sprite.loadTexture("cards1r", card.id - 1);
+        card.color = 'r';
     }
 }
