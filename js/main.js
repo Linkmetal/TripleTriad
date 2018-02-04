@@ -76,7 +76,6 @@ class Card {
         this.element = obj.element;
         this.level = obj.level;
         this.color = color;
-        this.originalPos;
     }
 
     stopDrag() {
@@ -270,8 +269,10 @@ function dDrag() {
 
 function eDrag() {
     for(let i = 0 ; i < playerCards.length; i++){
-        playerCards[i].sprite.inputEnabled = true;
-        playerCards[i].sprite.input.enableDrag(true);
+        if(boardo.slots.indexOf(playerCards[i]) == -1){
+            playerCards[i].sprite.inputEnabled = true;
+            playerCards[i].sprite.input.enableDrag(true);
+        }
     }
 }
 
@@ -316,61 +317,125 @@ function comMove(){
 }
 
 
-function checkMove(){
+function checkMove(mov){
     let slots = boardo.slots;
     let index = slots.indexOf(lastMoved);
     let type = index % 3;
     let plus = [];
     let same = [];
+
     //Highest Number Check
-    if(type != 2){
-        if(lastMoved.right == slots[index + 1].left){
-            same.push(index + 1);
-        }
-        if(lastMoved.right > slots[index + 1].left){
-            flipCard(slots[index + 1]);
-        }
-    }
-    if(type != 0){
-        if(lastMoved.left == slots[index - 1].right){
-            same.push(index - 1);
-        }
-        if(lastMoved.left > slots[index - 1].right){
-            flipCard(slots[index - 1]);
-        }
-    }
-    if(index - 3 >= type){
-        if(lastMoved.top == slots[index - 3].down){
-            same.push(index - 3);
-        }
-        if(lastMoved.top > slots[index - 3].down){
-            flipCard(slots[index - 3]);
+    if(type != 2){ // Columna izq/central
+        if(slots[index + 1].name != "none"){
+            if(lastMoved.right == slots[index + 1].left){
+                same.push(index + 1);
+            }
+            if(lastMoved.right > slots[index + 1].left){
+                let aux = flipCard(slots[index + 1]);
+                if(mov == "CADENA" && aux == true){
+                    alert(mov);
+                }
+            }
+            let aux = [];
+            aux.push(index + 1);
+            aux.push(lastMoved.right + slots[index + 1].left);
+            plus.push(aux);
         }
     }
-    if(index + 3 <= type + 6){
-        if(lastMoved.down == slots[index + 3].top){
-            same.push(index + 3);
-        }
-        if(lastMoved.down > slots[index + 3].top){
-            flipCard(slots[index + 3]);
+    if(type != 0){ // Columna der/central
+        if(slots[index - 1].name != "none"){
+            if(lastMoved.left == slots[index - 1].right){
+                same.push(index - 1);
+            }
+            if(lastMoved.left > slots[index - 1].right){
+                let aux = flipCard(slots[index - 1]);
+                if(mov == "CADENA"  && aux == true){
+                    alert(mov);
+                }
+            }
+            let aux = [];
+            aux.push(index - 1);
+            aux.push(lastMoved.left + slots[index - 1].right);
+            plus.push(aux);
         }
     }
+    if(index - 3 >= type){ // Fila inferior/central
+        if(slots[index - 3].name != "none"){
+            if(lastMoved.top == slots[index - 3].down){
+                same.push(index - 3);
+            }
+            if(lastMoved.top > slots[index - 3].down){
+                let aux = flipCard(slots[index - 3]);
+                if(mov == "CADENA" && aux == true){
+                    alert(mov);
+                }
+            }
+            let aux = [];
+            aux.push(index - 3);
+            aux.push(lastMoved.top + slots[index - 3].down);
+            plus.push(aux);
+        }
+    }
+    if(index + 3 <= type + 6){ // Fila superior/central
+        if(slots[index + 3].name != "none"){
+            if(lastMoved.down == slots[index + 3].top){
+                same.push(index + 3);
+            }
+            if(lastMoved.down > slots[index + 3].top){
+                let aux = flipCard(slots[index + 3]);
+                if(mov == "CADENA" && aux == true){
+                    alert(mov);
+                }
+            }
+            let aux = [];
+            aux.push(index + 3);
+            aux.push(lastMoved.down + slots[index + 3].top);
+            plus.push(aux);
+        }
+    }
+    //Regla Igual
     if(same.length >= 2){
         alert("IGUAL");
         for(let i = 0; i < same.length; i++){
-            console.log(same[i]);
             flipCard(slots[same[i]]);
+            lastMoved = slots[same[i]];
+            checkMove("CADENA");
+        }
+    }
+    //Regla Suma
+    for(let i = 0; i < plus.length-1; i++){
+        for(let j = i+1; j < plus.length; j++){
+            if(plus[i][1] == plus[j][1]){
+                let aux = false;
+                let aux2 = false;
+                aux = flipCard(slots[plus[i][0]]);
+                aux2 = flipCard(slots[plus[j][0]]);
+                if(aux == true){
+                    lastMoved = slots[plus[i][0]];
+                    checkMove("CADENA");
+                    alert("SUMA");
+                }
+                if(aux2 == true){
+                    lastMoved = slots[plus[j][0]];
+                    checkMove("CADENA");
+                    alert("SUMA");
+                }
+            }
         }
     }
 }
 
 function flipCard(card){
+    let flipped = false;
     if(turn == 1 && card.color == 'r'){
         card.sprite.loadTexture("cards1b", card.id - 1);
         card.color = 'b';
+        flipped = true;
     }
     if(turn == 0 && card.color == 'b'){
         card.sprite.loadTexture("cards1r", card.id - 1);
         card.color = 'r';
+        flipped = true;
     }
+    return flipped;
 }
