@@ -13,6 +13,8 @@ var style = {
     align: "center"
 };
 
+var score = [];
+
 var playerHand;
 var playerCards = [];
 var card1;
@@ -128,7 +130,7 @@ class Card {
                             lastMoved = boardo.slots[i];
                             turn = 1;
                             cardsPlayed++;
-                            checkMove();
+                            checkMove("");
                         }
                     } else {
 
@@ -312,7 +314,7 @@ function comMove(){
     lastMoved = comCards[it];
     turn = 0;
     cardsPlayed++;
-    checkMove();
+    checkMove("");
     eDrag();
 }
 
@@ -323,18 +325,15 @@ function checkMove(mov){
     let type = index % 3;
     let plus = [];
     let same = [];
+    let flipStack = [];
 
-    //Highest Number Check
-    if(type != 2){ // Columna izq/central
+    if(type != 2){ 
         if(slots[index + 1].name != "none"){
             if(lastMoved.right == slots[index + 1].left){
                 same.push(index + 1);
             }
             if(lastMoved.right > slots[index + 1].left){
-                let aux = flipCard(slots[index + 1]);
-                if(mov == "CADENA" && aux == true){
-                    alert(mov);
-                }
+                flipStack.push([slots[index + 1], mov]);
             }
             let aux = [];
             aux.push(index + 1);
@@ -342,16 +341,13 @@ function checkMove(mov){
             plus.push(aux);
         }
     }
-    if(type != 0){ // Columna der/central
+    if(type != 0){
         if(slots[index - 1].name != "none"){
             if(lastMoved.left == slots[index - 1].right){
                 same.push(index - 1);
             }
             if(lastMoved.left > slots[index - 1].right){
-                let aux = flipCard(slots[index - 1]);
-                if(mov == "CADENA"  && aux == true){
-                    alert(mov);
-                }
+                flipStack.push([slots[index - 1], mov]);
             }
             let aux = [];
             aux.push(index - 1);
@@ -359,16 +355,13 @@ function checkMove(mov){
             plus.push(aux);
         }
     }
-    if(index - 3 >= type){ // Fila inferior/central
+    if(index - 3 >= type){
         if(slots[index - 3].name != "none"){
             if(lastMoved.top == slots[index - 3].down){
                 same.push(index - 3);
             }
             if(lastMoved.top > slots[index - 3].down){
-                let aux = flipCard(slots[index - 3]);
-                if(mov == "CADENA" && aux == true){
-                    alert(mov);
-                }
+                flipStack.push([slots[index - 3], mov]);
             }
             let aux = [];
             aux.push(index - 3);
@@ -376,16 +369,13 @@ function checkMove(mov){
             plus.push(aux);
         }
     }
-    if(index + 3 <= type + 6){ // Fila superior/central
+    if(index + 3 <= type + 6){
         if(slots[index + 3].name != "none"){
             if(lastMoved.down == slots[index + 3].top){
                 same.push(index + 3);
             }
             if(lastMoved.down > slots[index + 3].top){
-                let aux = flipCard(slots[index + 3]);
-                if(mov == "CADENA" && aux == true){
-                    alert(mov);
-                }
+                flipStack.push([slots[index + 3], mov]);
             }
             let aux = [];
             aux.push(index + 3);
@@ -395,9 +385,8 @@ function checkMove(mov){
     }
     //Regla Igual
     if(same.length >= 2){
-        alert("IGUAL");
         for(let i = 0; i < same.length; i++){
-            flipCard(slots[same[i]]);
+            flipCard(slots[same[i]], "IGUAL");
             lastMoved = slots[same[i]];
             checkMove("CADENA");
         }
@@ -408,34 +397,42 @@ function checkMove(mov){
             if(plus[i][1] == plus[j][1]){
                 let aux = false;
                 let aux2 = false;
-                aux = flipCard(slots[plus[i][0]]);
-                aux2 = flipCard(slots[plus[j][0]]);
+                aux = flipCard(slots[plus[i][0]], "SUMA");
+                aux2 = flipCard(slots[plus[j][0]], "SUMA");
                 if(aux == true){
                     lastMoved = slots[plus[i][0]];
                     checkMove("CADENA");
-                    alert("SUMA");
                 }
                 if(aux2 == true){
                     lastMoved = slots[plus[j][0]];
                     checkMove("CADENA");
-                    alert("SUMA");
                 }
             }
         }
     }
+    //Regla carta mayor
+    for(let i = 0; i < flipStack.length; i++){
+        let aux = flipCard(flipStack[i][0], mov);
+    }
 }
 
-function flipCard(card){
+function flipCard(card, mov){
     let flipped = false;
     if(turn == 1 && card.color == 'r'){
         card.sprite.loadTexture("cards1b", card.id - 1);
         card.color = 'b';
         flipped = true;
+        if(mov != ""){
+            alert(mov);
+        }
     }
     if(turn == 0 && card.color == 'b'){
         card.sprite.loadTexture("cards1r", card.id - 1);
         card.color = 'r';
         flipped = true;
+        if(mov != ""){
+            alert(mov);
+        }
     }
     return flipped;
 }
