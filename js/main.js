@@ -1,3 +1,7 @@
+//BUGS//
+//El igual salta con cartas del mismo color
+
+
 var width = window.innerWidth;
 var height = window.innerHeight;
 var game = new Phaser.Game(width, height, Phaser.CANVAS, 'game', {
@@ -12,8 +16,9 @@ var style = {
     fill: "#ffffff",
     align: "center"
 };
-
-var score = [];
+var score = [5,5];
+var scoreSprites = [];
+var scoreGroup;
 
 var playerHand;
 var playerCards = [];
@@ -177,21 +182,26 @@ function preload() {
     game.load.spritesheet('cards2b', "/img/cards_2_b.jpg", 192, 247);
     game.load.spritesheet('cards2r', "/img/cards_2_r.jpg", 192, 247);
     game.load.image("handContainer", "/img/handContainer.png");
+    game.load.image("bscore", "/img/blue_card.png");
+    game.load.image("rscore", "/img/red_card.png");
 }
 
 function create() {
+    
+    
+    
     cardlist = new CardList();
     game.physics.startSystem(Phaser.Physics.ARCADE);
-
+    
     //Layer 0
     var background = game.add.sprite(0, 0, "background");
     var board = game.add.sprite(width * 0.32, height * 0.08, "board");
     var hand1 = game.add.sprite(width * 0.00, 0, "handContainer");
     var hand2 = game.add.sprite(width * 0.85, 0, "handContainer");
-
+    
     boardo = new Board();
     boardo.render();
-
+    
     hand1.scale.setTo(0.8, 0.9);
     hand2.scale.setTo(0.8, 0.9);
     board.scale.setTo(1.2, 1.05);
@@ -202,7 +212,22 @@ function create() {
     comHand = new Phaser.Group(game);
     comHand.top += height * 0.06;
     comHand.left += width * 0.874;
+    
+    scoreGroup = new Phaser.Group(game);
+    scoreGroup.top += height * 0.0250;
+    scoreGroup.left += width * 0.4155;
+    for(let i = 0; i < 10; i++){
+        if(i < 5){
+            scoreSprites.push(game.add.sprite(0, 0, "bscore"));
+        }
+        else{
+            scoreSprites.push(game.add.sprite(0, 0, "rscore"));
+        }
+        scoreGroup.add(scoreSprites[i]);
+    }
+    scoreGroup.align(10, 1, 32, 32);
 
+    
     //Layer 2
     card1 = new Card(cardlist.cards[29], "b");
     card2 = new Card(cardlist.cards[45], "b");
@@ -214,9 +239,9 @@ function create() {
     playerCards.push(card3);
     playerCards.push(card4);
     playerCards.push(card5);
-
-
-
+    
+    
+    
     card6 = new Card(cardlist.cards[28], "r");
     card7 = new Card(cardlist.cards[44], "r");
     card8 = new Card(cardlist.cards[32], "r");
@@ -227,20 +252,19 @@ function create() {
     comCards.push(card8);
     comCards.push(card9);
     comCards.push(card10);
-
-
+    
+    
     card1.render(playerHand, boardo.slots);
     card2.render(playerHand, boardo.slots);
     card3.render(playerHand, boardo.slots);
     card4.render(playerHand, boardo.slots);
     card5.render(playerHand, boardo.slots);
-
+    
     card6.render(comHand, boardo.slots);
     card7.render(comHand, boardo.slots);
     card8.render(comHand, boardo.slots);
     card9.render(comHand, boardo.slots);
     card10.render(comHand, boardo.slots);
-
 }
 
 function update() {
@@ -258,9 +282,25 @@ function update() {
         }
     }
     else{
-
+        if(score[0] == 5 ){
+            notification("warning", "EMPATE");
+            game.state.restart();
+        }
+        if(score[0] < 5){
+            notification("error", "PERDISTE");
+            game.state.restart();
+        }
+        if(score[0] > 5){
+            notification("success", "GANASTE");
+            game.state.restart();
+        }
     }
 }
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////METODOS GLOBALES///////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function dDrag() {
     for(let i = 0 ; i < playerCards.length; i++){
@@ -422,17 +462,79 @@ function flipCard(card, mov){
         card.sprite.loadTexture("cards1b", card.id - 1);
         card.color = 'b';
         flipped = true;
+        score[0]++;
+        score[1]--;
         if(mov != ""){
-            alert(mov);
+            notification("info", mov + ": '" + card.name + "' girada").css({
+                "font-size": "150%",
+                "width": "50vw",
+                "height": "6vh",
+                "text-align": "center",
+             });;
         }
+        refreshScore();
     }
     if(turn == 0 && card.color == 'b'){
         card.sprite.loadTexture("cards1r", card.id - 1);
         card.color = 'r';
         flipped = true;
+        score[0]--;
+        score[1]++;
         if(mov != ""){
-            alert(mov);
+           notification("info", mov + ": " + card.name + " girada").css({
+               "font-size": "150%",
+               "width": "50vw",
+               "height": "6vh",
+               "text-align": "center",
+            });
         }
+        refreshScore();
     }
     return flipped;
+}
+
+function refreshScore(){
+    for(let i = 0; i < scoreSprites.length; i++){
+        if(i < score[0]){
+            scoreSprites[i].loadTexture("bscore");
+        }
+        else{
+            scoreSprites[i].loadTexture("rscore");
+        }
+    }
+}
+
+
+toastr.options.closeButton = true;
+toastr.options.positionClass = "toast-bottom-center";
+function notification( type, message ) {
+    if( type == 'success' ) {
+        toastr.success(message).css({
+            "font-size": "150%",
+            "width": "50vw",
+            "height": "6vh",
+            "text-align": "center",
+         });
+    } else if( type == 'error' ) {
+            toastr.error(message).css({
+                "font-size": "150%",
+                "width": "50vw",
+                "height": "6vh",
+                "text-align": "center",
+             });
+    } else if( type == 'warning' ) {
+            toastr.warning(message).css({
+                "font-size": "150%",
+                "width": "50vw",
+                "height": "6vh",
+                "text-align": "center",
+             });
+    } else {
+        toastr.info(message).css({
+            "font-size": "150%",
+            "width": "50vw",
+            "height": "6vh",
+            "text-align": "center",
+         });
+    }	
 }
