@@ -320,26 +320,46 @@ function checkMove(){
     let slots = boardo.slots;
     let index = slots.indexOf(lastMoved);
     let type = index % 3;
-
+    let plus = [];
+    let same = [];
     //Highest Number Check
     if(type != 2){
+        if(lastMoved.right == slots[index + 1].left){
+            same.push(index + 1);
+        }
         if(lastMoved.right > slots[index + 1].left){
             flipCard(slots[index + 1]);
         }
     }
     if(type != 0){
+        if(lastMoved.left == slots[index - 1].right){
+            same.push(index - 1);
+        }
         if(lastMoved.left > slots[index - 1].right){
             flipCard(slots[index - 1]);
         }
     }
     if(index - 3 >= type){
+        if(lastMoved.top == slots[index - 3].down){
+            same.push(index - 3);
+        }
         if(lastMoved.top > slots[index - 3].down){
             flipCard(slots[index - 3]);
         }
     }
     if(index + 3 <= type + 6){
+        if(lastMoved.down == slots[index + 3].top){
+            same.push(index + 3);
+        }
         if(lastMoved.down > slots[index + 3].top){
             flipCard(slots[index + 3]);
+        }
+    }
+    if(same.length >= 2){
+        alert("IGUAL");
+        for(let i = 0; i < same.length; i++){
+            console.log(same[i]);
+            flipCard(slots[same[i]]);
         }
     }
 }
