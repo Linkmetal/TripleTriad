@@ -72,7 +72,7 @@ class Card {
         this.top = obj.top;
         this.left = obj.left;
         this.right = obj.right;
-        this.bottom = obj.bottom;
+        this.down = obj.bottom;
         this.element = obj.element;
         this.level = obj.level;
         this.color = color;
@@ -126,8 +126,10 @@ class Card {
                             boardo.slots.splice(i, 0, obj);
                             sprite.inputEnabled = false;
                             sprite.input.enableDrag(false);
+                            lastMoved = boardo.slots[i];
                             turn = 1;
                             cardsPlayed++;
+                            checkMove();
                         }
                     } else {
 
@@ -308,8 +310,121 @@ function comMove(){
     lastMoved = comCards[it];
     turn = 0;
     cardsPlayed++;
+    checkMove();
 }
 
 function checkMove(){
+    let movedIndex = boardo.slots.indexOf(lastMoved);
+    let slots = boardo.slots;
+    switch(movedIndex){
+        case 0:
+            if(lastMoved.right > slots[1].left && slots[1].left != 0){
+                flipCard(slots[1]);
+            }
+            if(lastMoved.down > slots[3].top && slots[3].top != 0){
+                flipCard(slots[3]);
+            }
+        break;
+        
+        case 1:
+            if(lastMoved.left > slots[0].right && slots[0].right != 0){
+                flipCard(slots[0]);
+            }
+            if(lastMoved.right > slots[2].left && slots[2].left != 0){
+                flipCard(slots[2]);
+            }
+            if(lastMoved.down > slots[4].top && slots[4].top != 0){
+                flipCard(slots[4]);
+            }
+        break;
 
+        case 2:
+            if(lastMoved.left > slots[1].right && slots[1].right != 0){
+                flipCard(slots[1]);
+            }
+            if(lastMoved.down > slots[5].top && slots[5].top != 0){
+                flipCard(slots[5]);
+            }
+        break;
+
+        case 3:
+            if(lastMoved.top > slots[0].down && slots[0].down != 0){
+                flipCard(slots[0]);
+            }
+            if(lastMoved.right > slots[4].left && slots[4].left != 0){
+                flipCard(slots[4]);
+            }
+            if(lastMoved.down > slots[6].top && slots[6].top != 0){
+                flipCard(slots[6]);
+            }
+        break;
+
+        case 4:
+            if(lastMoved.top > slots[1].down && slots[1].down != 0){
+                flipCard(slots[1]);
+            }
+            if(lastMoved.left > slots[3].right && slots[3].right != 0){
+                flipCard(slots[3]);
+            }
+            if(lastMoved.right > slots[5].left && slots[5].left != 0){
+                flipCard(slots[5]);
+            }
+            if(lastMoved.down > slots[7].top && slots[7].top != 0){
+                flipCard(slots[7]);
+            }
+        break;
+
+        case 5:
+            if(lastMoved.top > slots[2].down && slots[2].down != 0){
+                flipCard(slots[2]);
+            }
+            if(lastMoved.left > slots[4].right && slots[4].right != 0){
+                flipCard(slots[4]);
+            }
+            if(lastMoved.down > slots[8].top && slots[8].top != 0){
+                flipCard(slots[8]);
+            }
+        break;
+
+        case 6:
+            if(lastMoved.top > slots[3].down && slots[3].down != 0){
+                flipCard(slots[3]);
+            }
+            if(lastMoved.right > slots[7].left && slots[7].left != 0){
+                flipCard(slots[7]);
+            }
+        break;
+
+        case 7:
+            if(lastMoved.top > slots[4].down && slots[4].down != 0){
+                flipCard(slots[4]);
+            }
+            if(lastMoved.left > slots[6].right && slots[6].right != 0){
+                flipCard(slots[6]);
+            }
+            if(lastMoved.right > slots[8].left && slots[8].left != 0){
+                flipCard(slots[8]);
+            }
+        break;
+
+        case 8:
+            if(lastMoved.top > slots[5].down && slots[5].down != 0){
+                flipCard(slots[5]);
+            }
+            if(lastMoved.left > slots[7].right && slots[7].right != 0){
+                flipCard(slots[7]);
+            }
+        break;
+    }
+
+    function flipCard(card){
+        if(turn == 1 && card.color == 'r'){
+            card.sprite.loadTexture("cards1b", card.id - 1);
+            card.color = 'b';
+        }
+        if(turn == 0 && card.color == 'b'){
+            card.sprite.loadTexture("cards1r", card.id - 1);
+            card.color = 'r';
+        }
+    }
 }
