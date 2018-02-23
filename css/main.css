@@ -52,3 +52,20 @@ html, body {
   transform: scale(2.2);
   color: white;
 }
+
+#cardSelector {
+  display: none;
+  flex-flow: column nowrap;
+  position: absolute;
+  width: 20%;
+  height: 80%;
+  top: 10%;
+  left: 45%;
+  overflow-y: scroll;
+  background-color: wheat;
+}
+
+.cardDiv {
+  height: 40px;
+  border: solid;
+}

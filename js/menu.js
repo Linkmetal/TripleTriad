@@ -4,6 +4,7 @@ var Menu = function(game){
 var logged = false;
 var usernameInput;
 var passInput;
+let currentUser;
 
   
 Menu.prototype = {
@@ -31,9 +32,9 @@ Menu.prototype = {
 		passInput = this.passInput.canvasInput;
 
 		button = game.add.button(game.world.centerX - 240, 525, 'login', login, this, 2, 1, 0);
-		button = game.add.button(game.world.centerX - 155, 625, 'register', showForm, this, 2, 1, 0);
+		button2 = game.add.button(game.world.centerX - 155, 675, 'register', showForm, this, 2, 1, 0);
 
-		this.game.state.add('Game', Game);
+		this.game.state.add('DeckSelector', DeckSelector);
         // this.game.state.start('Game');
 	},
 	inputFocus: function(sprite){
@@ -78,7 +79,8 @@ function login(){
 			if(userList[i].username == user){
 				if(userList[i].password == pass){
 					// logged = true;
-					this.game.state.start('Game');
+					this.game.state.start('DeckSelector');
+					currentUser = userList[i];
 					return true;
 				}
 			}

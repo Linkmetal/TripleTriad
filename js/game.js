@@ -1,15 +1,9 @@
 var Game = function (game) {
     console.log("%cStarting my awesome game", "color:white; background:red");
 };
-var width = window.innerWidth;
-var height = window.innerHeight;
 var data_;
 var cardlist;
-var style = {
-    font: "18px Calibri",
-    fill: "#ffffff",
-    align: "center"
-};
+
 var score = [5, 5];
 var scoreSprites = [];
 var scoreGroup;

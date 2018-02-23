@@ -551,7 +551,7 @@
     },  
     {
         "id": 56,
-        "name": "",
+        "name": "none",
         "top": 1,
         "left": 1,
         "right": 1,
@@ -998,16 +998,6 @@
         "bottom": 9,
         "element": "none",
         "level": 9
-    },  
-    {
-        "id": 10,
-        "name": "",
-        "top": 1,
-        "left": 1,
-        "right": 1,
-        "bottom": 1,
-        "element": "none",
-        "level": 10
     },  
     {
         "id": 101,

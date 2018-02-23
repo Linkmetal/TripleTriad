@@ -1,9 +1,9 @@
 //BUGS//
 //El igual salta con cartas del mismo color
 
-var width = window.innerWidth;
-var height = window.innerHeight;
-var game = new Phaser.Game(width, height, Phaser.CANVAS, 'game', {
+let width = window.innerWidth;
+let height = window.innerHeight;
+let game = new Phaser.Game(width, height, Phaser.CANVAS, 'game', {
     preload: preload,
     create: create,
     update: update
@@ -115,6 +115,13 @@ class Card {
         //Add to the hand group
         hand.add(this.sprite);
         hand.align(1, 5, 192, 145);
+    }
+    renderNoGroup() {
+        this.sprite = game.add.sprite(0, 0, "cards1" + this.color, this.id - 1);
+        // this.sprite.inputEnabled = true;
+        // this.sprite.input.enableDrag(true);
+        this.sprite.width = 192;
+        this.sprite.height = 247;
     }
     render(hand, slots) {
         //Create the sprite and drag property
