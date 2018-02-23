@@ -1,7 +1,9 @@
 var Menu = function(game){
 	console.log("%cStarting my awesome game", "color:white; background:red");
 };
-
+var logged = false;
+var usernameInput;
+var passInput;
 
   
 Menu.prototype = {
@@ -25,10 +27,13 @@ Menu.prototype = {
 		this.passInput.canvasInput.placeHolder("Password");
 		this.passInput.canvasInput.value("");
 		
+		usernameInput = this.usernameInput.canvasInput;
+		passInput = this.passInput.canvasInput;
+
 		button = game.add.button(game.world.centerX - 240, 525, 'login', login, this, 2, 1, 0);
 		button = game.add.button(game.world.centerX - 155, 625, 'register', showForm, this, 2, 1, 0);
 
-		// this.game.state.add('Game', Game);
+		this.game.state.add('Game', Game);
         // this.game.state.start('Game');
 	},
 	inputFocus: function(sprite){
@@ -58,10 +63,27 @@ Menu.prototype = {
 		myInput.events.onInputUp.add(this.inputFocus, this);
 		
 		return myInput;
+	},
+	update: function(){
+
 	}
 }
 
 function login(){
-
+	let user = usernameInput.value();
+	let pass = passInput.value();
+	if(localStorage.getItem("userList") != null){
+		let userList = JSON.parse(localStorage.getItem("userList"));
+		for(let i = 0; i < userList.length; i++){
+			if(userList[i].username == user){
+				if(userList[i].password == pass){
+					// logged = true;
+					this.game.state.start('Game');
+					return true;
+				}
+			}
+		}
+		toastr.error("Login incorrecto");
+	}
 }
 

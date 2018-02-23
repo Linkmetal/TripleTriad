@@ -203,7 +203,7 @@ function create() {
     game.state.add('Menu', Menu);
     game.state.start('Menu');
     game.add.sprite("spinner", "/img/spinner.gif", 880, 440);
-    if(localStorage.getItem("usersList") == null){
+    if(localStorage.getItem("userList") == null){
         localStorage.setItem("userList", new Array());
     }
     
@@ -592,12 +592,16 @@ function register(){
     var username = $("#userInput").val();
     var password = $("#passwordInput").val();
     if(localStorage.getItem("userList") != null){
-        var userList = localStorage.getItem("usersList");
+        var userList = JSON.parse(localStorage.getItem("usersList"));
+        if(userList == null){
+            userList = [];
+        }
         if(userList.indexOf(username) == -1){
             var user = new User(username, password);
             userList.push(user);
-            localStorage.setItem("userList", userList);
+            localStorage.setItem("userList", JSON.stringify(userList));
             toastr.success("Usuario registrado correctamente");
+            $("#registerForm").css("display", "none");
         }
         else{
             toastr.error("El usuario ya existe, elija otro nombre");
