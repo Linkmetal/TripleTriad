@@ -1,15 +1,12 @@
 var Game = function (game) {
     console.log("%cStarting my awesome game", "color:white; background:red");
 };
-var data_;
-var cardlist;
 
 var score = [5, 5];
 var scoreSprites = [];
 var scoreGroup;
 
 var playerHand;
-var playerCards = [];
 var card1;
 var card2;
 var card3;
@@ -33,11 +30,10 @@ let boardo;
 var music;
 var music2;
 
+var gameEnded = false;
+
 Game.prototype = {
     preload: function () {
-        readTextFile("data/cards.json", function (text) {
-            data_ = JSON.parse(text);
-        });
         game.load.image("board", "/img/board6.png");
         game.load.image("background", "/img/background2.jpg"),
         game.load.image("dialogWindow", "/img/dialogWindow.png"),
@@ -97,19 +93,7 @@ Game.prototype = {
 
 
         //Layer 2
-        card1 = new Card(cardlist.cards[29], "b");
-        card2 = new Card(cardlist.cards[45], "b");
-        card3 = new Card(cardlist.cards[32], "b");
-        card4 = new Card(cardlist.cards[12], "b");
-        card5 = new Card(cardlist.cards[11], "b");
-        playerCards.push(card1);
-        playerCards.push(card2);
-        playerCards.push(card3);
-        playerCards.push(card4);
-        playerCards.push(card5);
-
-
-
+        
         card6 = new Card(cardlist.cards[28], "r");
         card7 = new Card(cardlist.cards[44], "r");
         card8 = new Card(cardlist.cards[32], "r");
@@ -122,11 +106,9 @@ Game.prototype = {
         comCards.push(card10);
 
 
-        card1.render(playerHand, boardo.slots);
-        card2.render(playerHand, boardo.slots);
-        card3.render(playerHand, boardo.slots);
-        card4.render(playerHand, boardo.slots);
-        card5.render(playerHand, boardo.slots);
+        for(let i = 0; i < playerCards.length; i++){
+            playerCards[i].render(playerHand, boardo.slots);
+        }
 
         card6.render(comHand, boardo.slots);
         card7.render(comHand, boardo.slots);
@@ -148,271 +130,27 @@ Game.prototype = {
                 setTimeout(comMove, 2000);
             }
         } else {
-            if (score[0] == 5) {
-                notification("warning", "EMPATE");
-                game.paused = true;
-                // game.state.restart();
-            }
-            if (score[0] < 5) {
-                notification("error", "PERDISTE");
-                game.paused = true;
-                // game.state.restart();
-            }
-            if (score[0] > 5) {
-                music.pause();
-                music2.play();
-                notification("success", "GANASTE");
-                game.paused = true;
-                // game.state.restart();
-            }
-        }
-    }
-}
-
-function readTextFile(file, callback) {
-    var rawFile = new XMLHttpRequest();
-    rawFile.overrideMimeType("application/json");
-    rawFile.open("GET", file, true);
-    rawFile.onreadystatechange = function () {
-        if (rawFile.readyState === 4 && rawFile.status == "200") {
-            callback(rawFile.responseText);
-        }
-    };
-    rawFile.send(null);
-}
-
-function dDrag() {
-    for (let i = 0; i < playerCards.length; i++) {
-        playerCards[i].sprite.inputEnabled = false;
-        playerCards[i].sprite.input.enableDrag(false);
-    }
-}
-
-function eDrag() {
-    for (let i = 0; i < playerCards.length; i++) {
-        if (boardo.slots.indexOf(playerCards[i]) == -1) {
-            playerCards[i].sprite.inputEnabled = true;
-            playerCards[i].sprite.input.enableDrag(true);
-        }
-    }
-}
-
-function checkOverlap(spriteA, spriteB) {
-    var boundsA = spriteA.getBounds();
-    boundsA.height = boundsA.height / 3;
-    boundsA.width = boundsA.width / 3;
-    var boundsB = spriteB.getBounds();
-    boundsB.height = boundsB.height / 3;
-    boundsB.width = boundsB.width / 3;
-    return Phaser.Rectangle.intersects(boundsA, boundsB);
-}
-
-function comMove() {
-    let randomCard = comHand.getRandom();
-    let randomSlot = 0;
-    do {
-        randomSlot = Math.floor(Math.random() * (9 - 1) + 1);
-    } while (boardo.slots[randomSlot].name != "none");
-    var aux = false;
-    var it = 0;
-    while (aux != true) {
-        if (comCards[it].sprite == randomCard) {
-            aux = true;
-        } else {
-            it++;
-        }
-    }
-    console.log(boardo.slots);
-    console.log(randomSlot);
-    boardo.container.remove(boardo.slots[randomSlot].sprite);
-    boardo.container.addAt(randomCard, randomSlot);
-    boardo.container.align(3, 3, 192, 247);
-    boardo.slots.splice(randomSlot, 1);
-    boardo.slots.splice(randomSlot, 0, comCards[it]);
-    lastMoved = comCards[it];
-    turn = 0;
-    cardsPlayed++;
-    checkMove("");
-    eDrag();
-}
-
-
-function checkMove(mov) {
-    let slots = boardo.slots;
-    let index = slots.indexOf(lastMoved);
-    let type = index % 3;
-    let plus = [];
-    let same = [];
-    let flipStack = [];
-
-    if (type != 2) {
-        if (slots[index + 1].name != "none") {
-            if (lastMoved.right == slots[index + 1].left) {
-                same.push(index + 1);
-            }
-            if (lastMoved.right > slots[index + 1].left) {
-                flipStack.push([slots[index + 1], mov]);
-            }
-            let aux = [];
-            aux.push(index + 1);
-            aux.push(lastMoved.right + slots[index + 1].left);
-            plus.push(aux);
-        }
-    }
-    if (type != 0) {
-        if (slots[index - 1].name != "none") {
-            if (lastMoved.left == slots[index - 1].right) {
-                same.push(index - 1);
-            }
-            if (lastMoved.left > slots[index - 1].right) {
-                flipStack.push([slots[index - 1], mov]);
-            }
-            let aux = [];
-            aux.push(index - 1);
-            aux.push(lastMoved.left + slots[index - 1].right);
-            plus.push(aux);
-        }
-    }
-    if (index - 3 >= type) {
-        if (slots[index - 3].name != "none") {
-            if (lastMoved.top == slots[index - 3].down) {
-                same.push(index - 3);
-            }
-            if (lastMoved.top > slots[index - 3].down) {
-                flipStack.push([slots[index - 3], mov]);
-            }
-            let aux = [];
-            aux.push(index - 3);
-            aux.push(lastMoved.top + slots[index - 3].down);
-            plus.push(aux);
-        }
-    }
-    if (index + 3 <= type + 6) {
-        if (slots[index + 3].name != "none") {
-            if (lastMoved.down == slots[index + 3].top) {
-                same.push(index + 3);
-            }
-            if (lastMoved.down > slots[index + 3].top) {
-                flipStack.push([slots[index + 3], mov]);
-            }
-            let aux = [];
-            aux.push(index + 3);
-            aux.push(lastMoved.down + slots[index + 3].top);
-            plus.push(aux);
-        }
-    }
-    //Regla Igual
-    if (same.length >= 2) {
-        for (let i = 0; i < same.length; i++) {
-            flipCard(slots[same[i]], "IGUAL");
-            lastMoved = slots[same[i]];
-            checkMove("CADENA");
-        }
-    }
-    //Regla Suma
-    for (let i = 0; i < plus.length - 1; i++) {
-        for (let j = i + 1; j < plus.length; j++) {
-            if (plus[i][1] == plus[j][1]) {
-                let aux = false;
-                let aux2 = false;
-                aux = flipCard(slots[plus[i][0]], "SUMA");
-                aux2 = flipCard(slots[plus[j][0]], "SUMA");
-                if (aux == true) {
-                    lastMoved = slots[plus[i][0]];
-                    checkMove("CADENA");
+            if(gameEnded == false){
+                if (score[0] == 5) {
+                    notification("warning", "EMPATE");
+                    // game.paused = true;
+                    // game.state.restart();
                 }
-                if (aux2 == true) {
-                    lastMoved = slots[plus[j][0]];
-                    checkMove("CADENA");
+                if (score[0] < 5) {
+                    notification("error", "PERDISTE");
+                    // game.paused = true;
+                    // game.state.restart();
                 }
+                if (score[0] > 5) {
+                    music.pause();
+                    music2.play();
+                    notification("success", "GANASTE");
+                    // game.paused = true;
+                    // game.state.restart();
+                }
+                gameEnded = true;
             }
         }
     }
-    //Regla carta mayor
-    for (let i = 0; i < flipStack.length; i++) {
-        let aux = flipCard(flipStack[i][0], mov);
-    }
 }
 
-function flipCard(card, mov) {
-    let flipped = false;
-    if (turn == 1 && card.color == 'r') {
-        card.sprite.loadTexture("cards1b", card.id - 1);
-        card.color = 'b';
-        flipped = true;
-        score[0]++;
-        score[1]--;
-        if (mov != "") {
-            notification("info", mov + ": '" + card.name + "' girada").css({
-                "font-size": "150%",
-                "width": "50vw",
-                "height": "6vh",
-                "text-align": "center",
-            });
-        }
-        refreshScore();
-    }
-    if (turn == 0 && card.color == 'b') {
-        card.sprite.loadTexture("cards1r", card.id - 1);
-        card.color = 'r';
-        flipped = true;
-        score[0]--;
-        score[1]++;
-        if (mov != "") {
-            notification("info", mov + ": '" + card.name + "' girada").css({
-                "font-size": "150%",
-                "width": "50vw",
-                "height": "6vh",
-                "text-align": "center",
-            });
-        }
-        refreshScore();
-    }
-    return flipped;
-}
-
-function refreshScore() {
-    for (let i = 0; i < scoreSprites.length; i++) {
-        if (i < score[0]) {
-            scoreSprites[i].loadTexture("bscore");
-        } else {
-            scoreSprites[i].loadTexture("rscore");
-        }
-    }
-}
-
-
-toastr.options.closeButton = true;
-toastr.options.positionClass = "toast-bottom-center";
-
-function notification(type, message) {
-    if (type == 'success') {
-        toastr.success(message).css({
-            "font-size": "150%",
-            "width": "50vw",
-            "height": "6vh",
-            "text-align": "center",
-        });
-    } else if (type == 'error') {
-        toastr.error(message).css({
-            "font-size": "150%",
-            "width": "50vw",
-            "height": "6vh",
-            "text-align": "center",
-        });
-    } else if (type == 'warning') {
-        toastr.warning(message).css({
-            "font-size": "150%",
-            "width": "50vw",
-            "height": "6vh",
-            "text-align": "center",
-        });
-    } else {
-        toastr.info(message).css({
-            "font-size": "150%",
-            "width": "50vw",
-            "height": "6vh",
-            "text-align": "center",
-        });
-    }
-}

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,26 +8,47 @@
     <link rel="stylesheet" href="css/main.css">
     <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js?ver=1.4.2'></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" media="screen" rel="stylesheet" type="text/css"
+    />
     <script src="/js/phaser.min.js"></script>
     <title>Triple Triad</title>
 </head>
-<body>
 
+<body>
+    <button id="resetButton"></button>
+    <ul class="segmented">
+        <li>
+            <input type="radio" id="a" name="radio1" value="easy">
+            <label for="a">Fácil</label>
+        </li>
+        <li>
+            <input type="radio" id="b" name="radio1" value="normal" checked>
+            <label for="b">Normal</label>
+        </li>
+        <li>
+            <input type="radio" id="c" name="radio1" value="hard">
+            <label for="c">Dificil</label>
+        </li>
+    </ul>
+    <div id="playerInfo"></div>
     <div id="registerForm">
-        <label for="userInput">&nbsp&nbspUsername:<input id="userInput" type="text"></label>
-        <label for="userInput">&nbsp&nbspPassword:<input id="passwordInput" type="password"></label>
+        <label for="userInput">&nbsp&nbspUsername:
+            <input id="userInput" type="text">
+        </label>
+        <label for="userInput">&nbsp&nbspPassword:
+            <input id="passwordInput" type="password">
+        </label>
         <button onclick="register()" id="registerButton">Submit</button>
         <button onclick="closeForm()" id="cancelButton">Cancel</button>
     </div>
 
-    <div id="cardSelector">
+    <div id="cardSelector"></div>
 
-    </div>
     <script src="/js/deckSelector.js"></script>
     <script src="/js/canvasInput.js"></script>
     <script src="/js/game.js"></script>
     <script src="/js/menu.js"></script>
     <script src="/js/main.js"></script>
 </body>
+
 </html>

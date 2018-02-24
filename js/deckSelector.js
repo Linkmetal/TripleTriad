@@ -2,6 +2,9 @@
 var DeckSelector = function (game) {
     console.log("%cStarting my awesome game", "color:white; background:red");
 };
+let playerCards = [];
+var hand;
+var deck = [];
 var data_;
 var card;
 var cardlist;
@@ -22,21 +25,39 @@ DeckSelector.prototype = {
         this.game.load.spritesheet('cards2b', "/img/cards_2_b.jpg", 192, 247);
         this.game.load.spritesheet('cards2r', "/img/cards_2_r.jpg", 192, 247);
         this.game.load.image("handContainer", "/img/handContainer.png");
+        this.game.load.image("dialogWindow", "/img/dialogWindow.png");
+        this.game.load.image("play", "/img/play.png");
+
+
 
     },
     create: function () {
-        cardlist = new CardList();
-        var background = this.game.add.sprite(0, 0, "background");
-        var hand = game.add.sprite(width * 0.00, 0, "handContainer");
-        this.game.state.add('Game', Game);
-        hand.scale.setTo(0.8, 0.9);
         $("#cardSelector").show();
+        $("#playerInfo").show();
+        $(".segmented").show();
+        $(".segmented input").click(function(e){
+            dificulty = $(e.target).val();
+        });
+        cardlist = new CardList();
+
+        var background = this.game.add.sprite(0, 0, "background");
+        var handSprite = game.add.sprite(width * 0.00, 0, "handContainer");
+        this.game.state.add('Game', Game);
+        handSprite.scale.setTo(0.8, 0.9);
+
+        button = game.add.button(360, 700, 'play', startGame, this, 2, 1, 0);
+        button.scale.setTo(1.5,1.5);
+
+        hand = new Phaser.Group(game);
+        hand.top += height * 0.06;
+        hand.left += width * 0.024;
         card = new Card(cardlist.cards[55], "b");
         card.renderNoGroup();
         card.sprite.top += height * 0.25;
         card.sprite.left += width * 0.70;
         card.sprite.scale.setTo(1.7, 1.7);
         loadCardData();
+        loadPlayerInfo();
         // this.game.state.start('Game');
     },
     inputFocus: function (sprite) {
@@ -92,4 +113,31 @@ function loadCardData(){
      function(e){
         card.sprite.loadTexture("cards1b", 56);
     });
+    $(".cardDiv").click(function(e){
+        if(playerCards.length < 5){
+            var trigger = e.currentTarget;
+            var id = trigger.id.split("card");
+            id = parseInt(id[1]);
+            var aux = new Card(cardlist.cards[id-1], "b");
+            aux.render(hand);
+            playerCards.push(aux);
+        }
+    });
+}
+
+
+function startGame() {
+    if(playerCards.length == 5){
+        $("#cardSelector").hide();
+        $("#playerInfo").hide();
+        $(".segmented").hide();
+        this.game.state.start('Game');
+    }
+    else{
+        toastr.error("Debes seleccionar 5 cartas antes de comenzar una partida");
+    }
+}
+
+function loadPlayerInfo(){
+    $("#playerInfo").append("<div>Bienvenido, <strong>" + currentUser.username + "</strong></div><div>Tu record es de: " + currentUser.wins + " victorias, " + currentUser.loses + " derrotas y " + currentUser.ties + " empates.</span>");
 }

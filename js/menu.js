@@ -28,6 +28,8 @@ Menu.prototype = {
 		this.passInput.canvasInput.placeHolder("Password");
 		this.passInput.canvasInput.value("");
 		
+		$(".segmented").hide();
+
 		usernameInput = this.usernameInput.canvasInput;
 		passInput = this.passInput.canvasInput;
 
