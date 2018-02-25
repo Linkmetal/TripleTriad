@@ -320,10 +320,12 @@ function checkMove(mov) {
     }
     //Regla Igual
     if (same.length >= 2) {
-        for (let i = 0; i < same.length; i++) {
-            flipCard(slots[same[i]], "IGUAL");
-            lastMoved = slots[same[i]];
-            checkMove("CADENA");
+        if((turn == 1 && (slots[same[0]].color == 'r' || slots[same[1]].color == 'r') || (turn == 0 && (slots[same[0]].color == 'b' || slots[same[1]].color == 'b')))){
+            for (let i = 0; i < same.length; i++) {
+                flipCard(slots[same[i]], "IGUAL");
+                lastMoved = slots[same[i]];
+                checkMove("CADENA");
+            }
         }
     }
     //Regla Suma
@@ -348,9 +350,12 @@ function checkMove(mov) {
     //Regla carta mayor
     for (let i = 0; i < flipStack.length; i++) {
         let aux = flipCard(flipStack[i][0], mov);
-        if(mov == "CADENA" && aux == true){
-            checkMove("CADENA");
+        if(aux == true){
+            lastMoved = flipStack[i][0];
         }
+        // if(mov == "CADENA" && aux == true){
+        //     checkMove("CADENA");
+        // }
     }
 }
 
@@ -458,7 +463,7 @@ function register() {
     var username = $("#userInput").val();
     var password = $("#passwordInput").val();
     if (localStorage.getItem("userList") != null) {
-        userList = JSON.parse(localStorage.getItem("usersList"));
+        userList = JSON.parse(localStorage.getItem("userList"));
         if (userList == null) {
             userList = {};
         }

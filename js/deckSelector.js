@@ -13,6 +13,7 @@ let style = {
     fill: "#ffffff",
     align: "center"
 };
+let loaded = false;
 
 DeckSelector.prototype = {
     preload: function () {
@@ -33,9 +34,6 @@ DeckSelector.prototype = {
         $("#cardSelector").show();
         $("#playerInfo").show();
         $(".segmented").show();
-        $(".segmented input").click(function(e){
-            dificulty = $(e.target).val();
-        });
         cardlist = new CardList();
 
         var background = this.game.add.sprite(0, 0, "background");
@@ -54,8 +52,13 @@ DeckSelector.prototype = {
         card.sprite.top += height * 0.25;
         card.sprite.left += width * 0.70;
         card.sprite.scale.setTo(1.7, 1.7);
-        loadCardData();
-        loadPlayerInfo();
+        if(loaded == false){
+            loadCardData();
+            loadPlayerInfo();
+            $(".segmented input").click(function(e){
+                dificulty = $(e.target).val();
+            });
+        }
         // this.game.state.start('Game');
     },
     inputFocus: function (sprite) {
@@ -89,7 +92,7 @@ DeckSelector.prototype = {
     update: function () {
 
     }
-}
+};
 
 function loadCardData(){
     for(let i = 0; i < cardlist.cards.length; i++){

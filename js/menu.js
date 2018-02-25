@@ -70,7 +70,7 @@ Menu.prototype = {
 	update: function(){
 
 	}
-}
+};
 
 function login(){
 	let user = usernameInput.value();

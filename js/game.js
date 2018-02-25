@@ -26,8 +26,8 @@ var gameEnded = false;
 Game.prototype = {
     preload: function () {
         game.load.image("board", "/img/board6.png");
-        game.load.image("background", "/img/background2.jpg"),
-        game.load.image("dialogWindow", "/img/dialogWindow.png"),
+        game.load.image("background", "/img/background2.jpg");
+        game.load.image("dialogWindow", "/img/dialogWindow.png");
         game.load.spritesheet('cards1b', "/img/cards_1_b.jpg", 192, 247);
         game.load.spritesheet('cards1r', "/img/cards_1_r.jpg", 192, 247);
         game.load.spritesheet('cards2b', "/img/cards_2_b.jpg", 192, 247);
@@ -40,25 +40,32 @@ Game.prototype = {
     },
     create: function () {
         $("#resetButton").show();
-        $("#resetButton").click(function(){
-            turn = -1;
-            for(let i = 0; i < comCards.length; i++){
-                score = [5, 5];
-                playerCards[i].color = 'b';
-                comHand[i].color = 'r';
-            }
-            game.state.restart();
-        });
-        var background = this.game.add.sprite(0, 0, "background");
-
+        if(loaded == false){
+            $("#resetButton").click(function(){
+                $("#resetButton").hide();
+                scoreSprites = [];
+                gameEnded = false;
+                cardsPlayed = 0;
+                loaded = true;
+                turn = -1;
+                score = [5,5];
+                playerCards = [];
+                comCards = [];
+                boardo.slots = [];
+                game.state.remove("Game");
+                game.state.add('DeckSelector', DeckSelector);
+                game.state.start("DeckSelector");
+            });
+        }
+        
         music = game.add.audio('music');
         music2 = game.add.audio('victory');
         music.play();
-
-
+        
+        
         cardlist = new CardList();
         game.physics.startSystem(Phaser.Physics.ARCADE);
-
+        
         //Layer 0
         var background = game.add.sprite(0, 0, "background");
         var board = game.add.sprite(width * 0.32, height * 0.08, "board");
@@ -161,4 +168,4 @@ Game.prototype = {
             }
         }
     }
-}
+};
