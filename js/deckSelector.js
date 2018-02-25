@@ -28,8 +28,6 @@ DeckSelector.prototype = {
         this.game.load.image("dialogWindow", "/img/dialogWindow.png");
         this.game.load.image("play", "/img/play.png");
 
-
-
     },
     create: function () {
         $("#cardSelector").show();

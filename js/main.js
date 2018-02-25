@@ -1,5 +1,6 @@
 //BUGS//
 //El igual salta con cartas del mismo color
+//Las notificaciones toastr dejan de funcionar si hace doble suma
 let dificulty = "normal";
 let width = window.innerWidth;
 let height = window.innerHeight;
@@ -8,6 +9,7 @@ let game = new Phaser.Game(width, height, Phaser.CANVAS, 'game', {
     create: create,
     update: update
 });
+let userList;
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -167,7 +169,7 @@ function create() {
     game.state.start('Menu');
     game.add.sprite("spinner", "/img/spinner.gif", 880, 440);
     if (localStorage.getItem("userList") == null) {
-        localStorage.setItem("userList", new Array());
+        localStorage.setItem("userList", {});
     }
 
 
@@ -346,40 +348,51 @@ function checkMove(mov) {
     //Regla carta mayor
     for (let i = 0; i < flipStack.length; i++) {
         let aux = flipCard(flipStack[i][0], mov);
+        if(mov == "CADENA" && aux == true){
+            checkMove("CADENA");
+        }
     }
 }
 
 function flipCard(card, mov) {
     let flipped = false;
     if (turn == 1 && card.color == 'r') {
-        card.sprite.loadTexture("cards1b", card.id - 1);
+        if (card.id <= 55) {
+            card.sprite.loadTexture("cards1b", card.id - 1);
+        } else {
+            card.sprite.loadTexture("cards2b", card.id - 57);
+        }
         card.color = 'b';
         flipped = true;
         score[0]++;
         score[1]--;
         if (mov != "") {
-            notification("info", mov + ": '" + card.name + "' girada").css({
-                "font-size": "150%",
-                "width": "50vw",
-                "height": "6vh",
-                "text-align": "center",
-            });
+            // notification("info", mov + ": '" + card.name + "' girada").css({
+            //     "font-size": "150%",
+            //     "width": "50vw",
+            //     "height": "6vh",
+            //     "text-align": "center",
+            // });
         }
         refreshScore();
     }
     if (turn == 0 && card.color == 'b') {
-        card.sprite.loadTexture("cards1r", card.id - 1);
+        if (card.id <= 55) {
+            card.sprite.loadTexture("cards1r", card.id - 1);
+        } else {
+            card.sprite.loadTexture("cards2r", card.id - 57);
+        }
         card.color = 'r';
         flipped = true;
         score[0]--;
         score[1]++;
         if (mov != "") {
-            notification("info", mov + ": '" + card.name + "' girada").css({
-                "font-size": "150%",
-                "width": "50vw",
-                "height": "6vh",
-                "text-align": "center",
-            });
+            // notification("info", mov + ": '" + card.name + "' girada").css({
+            //     "font-size": "150%",
+            //     "width": "50vw",
+            //     "height": "6vh",
+            //     "text-align": "center",
+            // });
         }
         refreshScore();
     }
@@ -445,18 +458,17 @@ function register() {
     var username = $("#userInput").val();
     var password = $("#passwordInput").val();
     if (localStorage.getItem("userList") != null) {
-        var userList = JSON.parse(localStorage.getItem("usersList"));
+        userList = JSON.parse(localStorage.getItem("usersList"));
         if (userList == null) {
-            userList = [];
+            userList = {};
         }
-        for (let i = 0; i < userList.length; i++) {
-            if(userList[i].username == username){
-                valid = false;
-            }
+        if(userList[username] != null){
+            valid = false;
         }
         if (valid == true) {
             var user = new User(username, password);
-            userList.push(user);
+            userList[username] = user;
+            console.log(userList);
             localStorage.setItem("userList", JSON.stringify(userList));
             toastr.success("Usuario registrado correctamente");
             $("#registerForm").css("display", "none");

@@ -7,19 +7,10 @@ var scoreSprites = [];
 var scoreGroup;
 
 var playerHand;
-var card1;
-var card2;
-var card3;
-var card4;
-var card5;
 
 var comHand;
 var comCards = [];
-var card6;
-var card7;
-var card8;
-var card9;
-var card10;
+
 
 var lastMoved;
 
@@ -48,6 +39,16 @@ Game.prototype = {
         game.load.audio('victory', 'music/victory.mp3');
     },
     create: function () {
+        $("#resetButton").show();
+        $("#resetButton").click(function(){
+            turn = -1;
+            for(let i = 0; i < comCards.length; i++){
+                score = [5, 5];
+                playerCards[i].color = 'b';
+                comHand[i].color = 'r';
+            }
+            game.state.restart();
+        });
         var background = this.game.add.sprite(0, 0, "background");
 
         music = game.add.audio('music');
@@ -81,6 +82,7 @@ Game.prototype = {
         scoreGroup = new Phaser.Group(game);
         scoreGroup.top += height * 0.0250;
         scoreGroup.left += width * 0.4155;
+
         for (let i = 0; i < 10; i++) {
             if (i < 5) {
                 scoreSprites.push(game.add.sprite(0, 0, "bscore"));
@@ -93,28 +95,30 @@ Game.prototype = {
 
 
         //Layer 2
-        
-        card6 = new Card(cardlist.cards[28], "r");
-        card7 = new Card(cardlist.cards[44], "r");
-        card8 = new Card(cardlist.cards[32], "r");
-        card9 = new Card(cardlist.cards[13], "r");
-        card10 = new Card(cardlist.cards[18], "r");
-        comCards.push(card6);
-        comCards.push(card7);
-        comCards.push(card8);
-        comCards.push(card9);
-        comCards.push(card10);
-
-
-        for(let i = 0; i < playerCards.length; i++){
+        for (let i = 0; i < playerCards.length; i++) {
             playerCards[i].render(playerHand, boardo.slots);
         }
 
-        card6.render(comHand, boardo.slots);
-        card7.render(comHand, boardo.slots);
-        card8.render(comHand, boardo.slots);
-        card9.render(comHand, boardo.slots);
-        card10.render(comHand, boardo.slots);
+        for(let i = 0; i < 5; i++){
+            var rnd = 0;
+
+            if(dificulty == "easy"){
+                rnd = Math.floor(Math.random() * (56 - 1 + 1)) + 1;
+            }
+            if(dificulty == "normal"){
+                rnd = Math.floor(Math.random() * (89 - 57 + 1)) + 57;
+            }
+            if(dificulty == "hard"){
+                rnd = Math.floor(Math.random() * (110 - 90 + 1)) + 90;
+            }
+            var crd = new Card(cardlist.cards[rnd], 'r');
+            comCards.push(crd);
+        }
+
+        for (let i = 0; i < comCards.length; i++) {
+            comCards[i].render(comHand, boardo.slots);
+        }
+
     },
 
     update: function () {
@@ -130,27 +134,31 @@ Game.prototype = {
                 setTimeout(comMove, 2000);
             }
         } else {
-            if(gameEnded == false){
+            if (gameEnded == false) {
                 if (score[0] == 5) {
                     notification("warning", "EMPATE");
+                    currentUser.ties++;
                     // game.paused = true;
                     // game.state.restart();
                 }
                 if (score[0] < 5) {
                     notification("error", "PERDISTE");
+                    currentUser.loses++;
                     // game.paused = true;
                     // game.state.restart();
                 }
                 if (score[0] > 5) {
+                    currentUser.wins++;
                     music.pause();
                     music2.play();
                     notification("success", "GANASTE");
                     // game.paused = true;
                     // game.state.restart();
                 }
+                userList[currentUser.username] = currentUser;
+                localStorage.setItem("userList", JSON.stringify(userList));
                 gameEnded = true;
             }
         }
     }
 }
-

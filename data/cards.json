@@ -852,10 +852,10 @@
     {
         "id": 86,
         "name": "Ifrit",
-        "top": 6,
-        "left": 9,
-        "right": 7,
-        "bottom": 4,
+        "top": 9,
+        "left": 8,
+        "right": 6,
+        "bottom": 2,
         "element": "fire",
         "level": 8
     },  

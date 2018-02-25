@@ -76,15 +76,22 @@ function login(){
 	let user = usernameInput.value();
 	let pass = passInput.value();
 	if(localStorage.getItem("userList") != null){
-		let userList = JSON.parse(localStorage.getItem("userList"));
-		for(let i = 0; i < userList.length; i++){
-			if(userList[i].username == user){
-				if(userList[i].password == pass){
-					// logged = true;
-					this.game.state.start('DeckSelector');
-					currentUser = userList[i];
-					return true;
-				}
+		userList = JSON.parse(localStorage.getItem("userList"));
+		// for(let i = 0; i < userList.length; i++){
+		// 	if(userList[i].username == user){
+		// 		if(userList[i].password == pass){
+		// 			// logged = true;
+		// 			this.game.state.start('DeckSelector');
+		// 			currentUser = userList[i];
+		// 			return true;
+		// 		}
+		// 	}
+		// }
+		if(userList[user] != null){
+			if(userList[user].password == pass){
+				this.game.state.start('DeckSelector');
+				currentUser = userList[user];
+				return true;
 			}
 		}
 		toastr.error("Login incorrecto");

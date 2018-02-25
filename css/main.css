@@ -94,6 +94,15 @@ body {
   padding: 10px;
 }
 
+#resetButton {
+  display: none;
+  position: absolute;
+  left: 60%;
+  top: 2%;
+  width: 5%;
+  height: 5%;
+}
+
 label {
   display: inline-block;
   padding: 1em;
