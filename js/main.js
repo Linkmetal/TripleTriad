@@ -169,7 +169,7 @@ function create() {
     game.state.start('Menu');
     game.add.sprite("spinner", "/img/spinner.gif", 880, 440);
     if (localStorage.getItem("userList") == null) {
-        localStorage.setItem("userList", {});
+        localStorage.setItem("userList", JSON.stringify({}));
     }
 
 
