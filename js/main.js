@@ -167,7 +167,7 @@ function preload() {
 function create() {
     game.state.add('Menu', Menu);
     game.state.start('Menu');
-    game.add.sprite("spinner", "/img/spinner.gif", 880, 440);
+    game.add.sprite("spinner", "img/spinner.gif", 880, 440);
     if (localStorage.getItem("userList") == null) {
         localStorage.setItem("userList", {});
     }

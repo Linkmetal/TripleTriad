@@ -20,7 +20,7 @@ body {
   height: 90%;
   top: 5%;
   left: 15%;
-  background-image: url("/img/board2.jpg");
+  background-image: url("img/board2.jpg");
   background-repeat: no-repeat;
   background-size: 100% 100%;
 }

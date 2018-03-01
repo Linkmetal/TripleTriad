@@ -25,16 +25,16 @@ var gameEnded = false;
 
 Game.prototype = {
     preload: function () {
-        game.load.image("board", "/img/board6.png");
-        game.load.image("background", "/img/background2.jpg");
-        game.load.image("dialogWindow", "/img/dialogWindow.png");
-        game.load.spritesheet('cards1b', "/img/cards_1_b.jpg", 192, 247);
-        game.load.spritesheet('cards1r', "/img/cards_1_r.jpg", 192, 247);
-        game.load.spritesheet('cards2b', "/img/cards_2_b.jpg", 192, 247);
-        game.load.spritesheet('cards2r', "/img/cards_2_r.jpg", 192, 247);
-        game.load.image("handContainer", "/img/handContainer.png");
-        game.load.image("bscore", "/img/blue_card.png");
-        game.load.image("rscore", "/img/red_card.png");
+        game.load.image("board", "img/board6.png");
+        game.load.image("background", "img/background2.jpg");
+        game.load.image("dialogWindow", "img/dialogWindow.png");
+        game.load.spritesheet('cards1b', "img/cards_1_b.jpg", 192, 247);
+        game.load.spritesheet('cards1r', "img/cards_1_r.jpg", 192, 247);
+        game.load.spritesheet('cards2b', "img/cards_2_b.jpg", 192, 247);
+        game.load.spritesheet('cards2r', "img/cards_2_r.jpg", 192, 247);
+        game.load.image("handContainer", "img/handContainer.png");
+        game.load.image("bscore", "img/blue_card.png");
+        game.load.image("rscore", "img/red_card.png");
         game.load.audio('music', 'music/theme.mp3');
         game.load.audio('victory', 'music/victory.mp3');
     },

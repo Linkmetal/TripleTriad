@@ -21,13 +21,13 @@ DeckSelector.prototype = {
             data_ = JSON.parse(text);
         });
         this.game.load.image("background", "img/background2.jpg");
-        this.game.load.spritesheet('cards1b', "/img/cards_1_b.jpg", 192, 247);
-        this.game.load.spritesheet('cards1r', "/img/cards_1_r.jpg", 192, 247);
-        this.game.load.spritesheet('cards2b', "/img/cards_2_b.jpg", 192, 247);
-        this.game.load.spritesheet('cards2r', "/img/cards_2_r.jpg", 192, 247);
-        this.game.load.image("handContainer", "/img/handContainer.png");
-        this.game.load.image("dialogWindow", "/img/dialogWindow.png");
-        this.game.load.image("play", "/img/play.png");
+        this.game.load.spritesheet('cards1b', "img/cards_1_b.jpg", 192, 247);
+        this.game.load.spritesheet('cards1r', "img/cards_1_r.jpg", 192, 247);
+        this.game.load.spritesheet('cards2b', "img/cards_2_b.jpg", 192, 247);
+        this.game.load.spritesheet('cards2r', "img/cards_2_r.jpg", 192, 247);
+        this.game.load.image("handContainer", "img/handContainer.png");
+        this.game.load.image("dialogWindow", "img/dialogWindow.png");
+        this.game.load.image("play", "img/play.png");
 
     },
     create: function () {
